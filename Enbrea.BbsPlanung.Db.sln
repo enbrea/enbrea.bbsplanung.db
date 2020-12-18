@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30320.27
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{E1D0DF5D-BEAC-489F-A609-07A3B1DD8661}") = "Enbrea.BbsPlanung.Db", "src\Enbrea.BbsPlanung.Db.csproj", "{3D16105C-44D0-4000-BB49-48E6B1D172C4}"
+EndProject
+Project("{E1D0DF5D-BEAC-489F-A609-07A3B1DD8661}") = "Enbrea.BbsPlanung.Db.SmokeTest", "test\SmokeTest\Enbrea.BbsPlanung.Db.SmokeTest.csproj", "{624EC921-0F39-4787-B01F-9C89E5E7C874}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3D16105C-44D0-4000-BB49-48E6B1D172C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D16105C-44D0-4000-BB49-48E6B1D172C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D16105C-44D0-4000-BB49-48E6B1D172C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D16105C-44D0-4000-BB49-48E6B1D172C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{624EC921-0F39-4787-B01F-9C89E5E7C874}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{624EC921-0F39-4787-B01F-9C89E5E7C874}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{624EC921-0F39-4787-B01F-9C89E5E7C874}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{624EC921-0F39-4787-B01F-9C89E5E7C874}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5BE2A65D-5655-4C90-97CE-26121FF9652D}
+	EndGlobalSection
+EndGlobal

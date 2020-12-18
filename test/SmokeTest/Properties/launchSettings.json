@@ -1,0 +1,7 @@
+{
+  "profiles": {
+    "Enbrea.BbsPlanung.Db.SmokeTest": {
+      "commandName": "Project"
+    }
+  }
+}
