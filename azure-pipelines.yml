@@ -99,4 +99,5 @@ steps:
       git fetch github
       git checkout .
       git push github HEAD:main
+      git push --tags github HEAD:main
     pwsh: true
