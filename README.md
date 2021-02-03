@@ -17,7 +17,7 @@ Voraussetzung für den Zugriff ist eine Installation von BBS-Planung. BBS-Planun
 
 1. Öffne die Webseite zum Download der [Microsoft Access Database Engine 2016 Redistributable](https://www.microsoft.com/en-us/download/details.aspx?id=54920)
 
-2. Klicke auf **Download** und lade Dir das Setup für 64-Bit `accessdatabaseengine_X64.exe` herunter.
+2. Klicke auf **Download** und lade Dir das Setup für 64-Bit `accessdatabaseengine_X64.exe` herunter. :fire: *Sollte MS Access in der 32-Bit-Version installiert sein, dann musst Du Dir das Setup für 32-Bit `accessdatabaseengine.exe` herunterladen, da die Access-Datenbank-Engines für 64-Bit und 32-Bit nicht koexistieren können.*
 
 3. Starte das Setup und folge den Anweisungen.
 
