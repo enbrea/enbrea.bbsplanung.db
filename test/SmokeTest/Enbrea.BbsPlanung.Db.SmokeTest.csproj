@@ -5,7 +5,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <Authors>STÜBER SYSTEMS GmbH</Authors>
     <Company>STÜBER SYSTEMS GmbH</Company>
-    <Copyright>© 2020 STÜBER SYSTEMS GmbH</Copyright>
+    <Copyright>© 2021 STÜBER SYSTEMS GmbH</Copyright>
     <Product>ENBREA BBS-PLANUNG.DB</Product>
     <Description>Smoke test for ENBREA BBS-PLANUNG.DB</Description>
   </PropertyGroup>

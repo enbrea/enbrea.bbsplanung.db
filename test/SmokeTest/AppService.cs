@@ -1,8 +1,8 @@
-﻿#region ENBREA - Copyright (C) 2020 STÜBER SYSTEMS GmbH
+﻿#region ENBREA - Copyright (C) 2021 STÜBER SYSTEMS GmbH
 /*    
  *    ENBREA
  *    
- *    Copyright (C) 2020 STÜBER SYSTEMS GmbH
+ *    Copyright (C) 2021 STÜBER SYSTEMS GmbH
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU Affero General Public License, version 3,
@@ -26,7 +26,7 @@ namespace Enbrea.BbsPlanung.Db.SmokeTest
     public class AppService
     {
         private readonly AppConfig _appConfig;
-
+        
         public AppService(AppConfig appConfig)
         {
             _appConfig = appConfig;
@@ -84,7 +84,9 @@ namespace Enbrea.BbsPlanung.Db.SmokeTest
 
         private async Task ExportCompanies()
         {
-            var dbReader = CreateDbReader();
+            await using var dbReader = CreateDbReader();
+
+            await dbReader.ConnectAsync();
 
             Console.WriteLine();
             Console.WriteLine("Companies:");
@@ -99,11 +101,15 @@ namespace Enbrea.BbsPlanung.Db.SmokeTest
                     company.Locality, 
                     company.Contact);
             }
+
+            await dbReader.DisconnectAsync();
         }
 
         private async Task ExportEducationalPrograms()
         {
-            var dbReader = CreateDbReader();
+            await using var dbReader = CreateDbReader();
+
+            await dbReader.ConnectAsync();
 
             Console.WriteLine();
             Console.WriteLine("Educational Programs:");
@@ -120,11 +126,15 @@ namespace Enbrea.BbsPlanung.Db.SmokeTest
                     educationalProgram.ProfessionFeminine, 
                     educationalProgram.ProfessionMasculine);
             }
+
+            await dbReader.DisconnectAsync();
         }
 
         private async Task ExportSchoolClasses()
         {
-            var dbReader = CreateDbReader();
+            await using var dbReader = CreateDbReader();
+
+            await dbReader.ConnectAsync();
 
             Console.WriteLine();
             Console.WriteLine("School Classes:");
@@ -138,11 +148,15 @@ namespace Enbrea.BbsPlanung.Db.SmokeTest
                     schoolClass.CoordinationArea, 
                     schoolClass.Notes);
             }
+
+            await dbReader.DisconnectAsync();
         }
 
         private async Task ExportStudents()
         {
-            var dbReader = CreateDbReader();
+            await using var dbReader = CreateDbReader();
+
+            await dbReader.ConnectAsync();
 
             Console.WriteLine();
             Console.WriteLine("Students:");
@@ -158,11 +172,15 @@ namespace Enbrea.BbsPlanung.Db.SmokeTest
                     student.Locality, 
                     student.SchoolClass);
             }
+
+            await dbReader.DisconnectAsync();
         }
 
         private async Task ExportTeachers()
         {
-            var dbReader = CreateDbReader();
+            await using var dbReader = CreateDbReader();
+
+            await dbReader.ConnectAsync();
 
             Console.WriteLine();
             Console.WriteLine("Teachers:");
@@ -177,6 +195,8 @@ namespace Enbrea.BbsPlanung.Db.SmokeTest
                     teacher.Birthdate?.ToString("dd.MM.yyyy"), 
                     teacher.Locality);
             }
+
+            await dbReader.DisconnectAsync();
         }
     }
 }

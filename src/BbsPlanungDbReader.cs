@@ -1,8 +1,8 @@
-﻿#region ENBREA - Copyright (C) 2020 STÜBER SYSTEMS GmbH
+﻿#region ENBREA - Copyright (C) 2021 STÜBER SYSTEMS GmbH
 /*    
  *    ENBREA
  *    
- *    Copyright (C) 2020 STÜBER SYSTEMS GmbH
+ *    Copyright (C) 2021 STÜBER SYSTEMS GmbH
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU Affero General Public License, version 3,
@@ -22,22 +22,24 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.Odbc;
+using System.Threading.Tasks;
 
 namespace Enbrea.BbsPlanung.Db
 {
     /// <summary>
     /// A reader class for BBS-Planung databases
     /// </summary>
-    public class BbsPlanungDbReader
+    public sealed class BbsPlanungDbReader : IAsyncDisposable
     {
-        private readonly string _dbConnectionString;
+        private readonly DbConnection _dbConnection;
+        private DbTransaction _dbTransaction;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BbsPlanungDbReader<T>"/> class.
         /// </summary>
         public BbsPlanungDbReader(string dbConnectionString)
         {
-            _dbConnectionString = dbConnectionString;
+            _dbConnection = new OdbcConnection(dbConnectionString);
         }
 
         /// <summary>
@@ -65,6 +67,16 @@ namespace Enbrea.BbsPlanung.Db
 
                 dbCommand.Parameters.Add(dbParameter);
             }
+        }
+
+        /// <summary>
+        /// Connects to the database and starts a transaction
+        /// </summary>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        public async Task ConnectAsync()
+        {
+            await _dbConnection.OpenAsync();
+            _dbTransaction = await _dbConnection.BeginTransactionAsync();
         }
 
         /// <summary>
@@ -136,6 +148,25 @@ namespace Enbrea.BbsPlanung.Db
                     $"select id, KONF, Text " +
                     $"from KONFESSION";
             };
+        }
+
+        /// <summary>
+        /// Closes the database connection
+        /// </summary>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        public async Task DisconnectAsync()
+        {
+            await _dbTransaction.CommitAsync();
+            await _dbConnection.CloseAsync();
+        }
+
+        /// <summary>
+        /// Asynchronously disposes the database connection.
+        /// </summary>
+        /// <returns>A task that represents the asynchronous dispose operation.</returns>
+        public async ValueTask DisposeAsync()
+        {
+            await _dbConnection.DisposeAsync();
         }
 
         /// <summary>
@@ -239,7 +270,6 @@ namespace Enbrea.BbsPlanung.Db
                     $"from SCHL_MUSPR";
             };
         }
-
         /// <summary>
         /// Returns back all organizational forms (Organistationsformen)
         /// </summary>
@@ -422,15 +452,6 @@ namespace Enbrea.BbsPlanung.Db
         }
 
         /// <summary>
-        /// Creates an ODBC database connection
-        /// </summary>
-        /// <returns>The newly created database connection</returns>
-        private DbConnection CreateConnection()
-        {
-            return new OdbcConnection(_dbConnectionString);
-        }
-
-        /// <summary>
         /// Opens the internal database connection, executes an SQL query and iterates over the result set.
         /// </summary>
         /// <typeparam name="TEntity">Enttiy type to be created</typeparam>
@@ -439,27 +460,16 @@ namespace Enbrea.BbsPlanung.Db
         /// <returns>An async enumerator of TEntity instances</returns>
         private async IAsyncEnumerable<TEntity> EntitiesAsync<TEntity>(Action<DbCommand> setCommand, Func<DbDataReader, TEntity> createEntity)
         {
-            using DbConnection dbConnection = CreateConnection();
+            using var dbCommand = _dbConnection.CreateCommand();
 
-            await dbConnection.OpenAsync();
-            try
+            dbCommand.Transaction = _dbTransaction;
+            setCommand(dbCommand);
+
+            using var reader = await dbCommand.ExecuteReaderAsync();
+
+            while (await reader.ReadAsync())
             {
-                using var dbTransaction = dbConnection.BeginTransaction();
-                using var dbCommand = dbConnection.CreateCommand();
-
-                dbCommand.Transaction = dbTransaction;
-                setCommand(dbCommand);
-
-                using var reader = await dbCommand.ExecuteReaderAsync();
-
-                while (await reader.ReadAsync())
-                {
-                    yield return createEntity(reader);
-                }
-            }
-            finally
-            {
-                await dbConnection.CloseAsync();
+                yield return createEntity(reader);
             }
         }
     }
