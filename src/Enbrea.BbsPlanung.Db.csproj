@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net60</TargetFramework>
+		<TargetFramework>net6.0</TargetFramework>
 		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 		<Authors>STÜBER SYSTEMS GmbH</Authors>
 		<Company>STÜBER SYSTEMS GmbH</Company>
@@ -13,7 +13,7 @@
 		<NeutralLanguage></NeutralLanguage>
 		<Version>0.2.0</Version>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
-		<RepositoryUrl>https://github.com/stuebersystems/enbrea.bbsplanung.db</RepositoryUrl>
+		<RepositoryUrl>https://github.com/enbrea/enbrea.bbsplanung.db</RepositoryUrl>
 	</PropertyGroup>
 
 	<ItemGroup>
