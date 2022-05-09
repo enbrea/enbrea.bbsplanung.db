@@ -25,12 +25,9 @@ Der Zugriff per ODBC auf MS Access ist auch Thema eines [Troubleshooting-Artikel
 
 ## Dokumentation
 
-Die Dokumentation zu dieser Bibliothek findest Du im [GitHub-Wiki](https://github.com/stuebersystems/enbrea.bbsplanung.db/wiki).
+Die Dokumentation zu dieser Bibliothek findest Du im [GitHub-Wiki](https://github.com/enbrea/enbrea.bbsplanung.db/wiki).
 
 ## Kann ich mithelfen?
 
 Ja, sehr gerne. Der beste Weg mitzuhelfen ist es, Rückmeldung per Issue-Tracker zu geben und/oder Korrekturen per Pull-Request zu übermitteln.
 
-## Code of conduct (Verhaltensregeln)
-
-In diesem Projekt wurde der [STÜBER SYSTEMS Code of conduct](https://www.stueber.de/code-of-conduct.php) übernommen.
