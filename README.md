@@ -1,5 +1,5 @@
 [![NuGet Gallery](https://img.shields.io/badge/NuGet%20Gallery-enbrea.bbsplanung.db-blue.svg)](https://www.nuget.org/packages/Enbrea.BbsPlanung.Db/)
-![GitHub](https://img.shields.io/github/license/stuebersystems/enbrea.bbsplanung.db)
+![GitHub](https://img.shields.io/github/license/enbrea/enbrea.bbsplanung.db)
 
 # ENBREA BBS-PLANUNG.DB
 
