@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
+		<TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
 		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 		<Authors>STÜBER SYSTEMS GmbH</Authors>
 		<Company>STÜBER SYSTEMS GmbH</Company>
-		<Copyright>© 2022 STÜBER SYSTEMS GmbH</Copyright>
+		<Copyright>© 2023 STÜBER SYSTEMS GmbH</Copyright>
 		<Product>ENBREA BBS-PLANUNG.DB</Product>
 		<Description>Reader class for the BBS-Planung database</Description>
 		<PackageLicenseUrl></PackageLicenseUrl>
@@ -28,7 +28,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="System.Data.Odbc" Version="6.0.0" />
+		<PackageReference Include="System.Data.Odbc" Version="8.0.0" />
 	</ItemGroup>
 
 </Project>

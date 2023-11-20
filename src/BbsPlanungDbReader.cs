@@ -1,8 +1,8 @@
-﻿#region ENBREA - Copyright (C) 2022 STÜBER SYSTEMS GmbH
+﻿#region ENBREA - Copyright (C) 2023 STÜBER SYSTEMS GmbH
 /*    
  *    ENBREA
  *    
- *    Copyright (C) 2022 STÜBER SYSTEMS GmbH
+ *    Copyright (C) 2023 STÜBER SYSTEMS GmbH
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU Affero General Public License, version 3,
@@ -376,7 +376,7 @@ namespace Enbrea.BbsPlanung.Db
                     $"E_TEL2, E_TEL_HANDY2, E_FAX2, E_EMAIL2, E_BEM, K1, K_NR1, K2, K_NR2, K3, K_NR3, K4, K_NR4, K5, K_NR5, K6, " +
                     $"K_NR6, K7, K_NR7, K8, K_NR8, K9, K_NR9, K10, K_NR10, K11, K_NR11, K12, K_NR12, K13, K_NR13, K14, K_NR14, " +
                     $"K15, K_NR15, BETRIEB_NR, BETRIEB_NR2, BETRIEB_NR3, BETRIEB_NR4 " +
-                    $"from SIL where SNR=?";
+                    $"from SIL where SNR=? AND (LFD IS NOT NULL)";
 
                 var dbParameter = dbCommand.CreateParameter();
                 dbParameter.ParameterName = "@SNR";
