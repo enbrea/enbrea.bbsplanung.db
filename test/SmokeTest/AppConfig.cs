@@ -1,6 +1,6 @@
-﻿#region ENBREA - Copyright (C) STÜBER SYSTEMS GmbH
+﻿#region Enbrea - Copyright (C) STÜBER SYSTEMS GmbH
 /*    
- *    ENBREA
+ *    Enbrea
  *    
  *    Copyright (C) STÜBER SYSTEMS GmbH
  *
