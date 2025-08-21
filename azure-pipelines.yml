@@ -69,7 +69,7 @@ stages:
         command: 'restore'
         projects: '*.sln'
         feedsToUse: 'select'
-        vstsFeed: '340e7a34-33ea-4418-8b72-d55dcb74efa7/dd1a6c3c-4e29-44c2-a80d-9d6c7004ac57'
+        vstsFeed: 'b0890edd-bcca-4a1c-b63c-d22daf6e4407/24f47e68-5eca-4ba8-8ab3-905662347d75'
     - task: DotNetCoreCLI@2
       displayName: 'Build'
       inputs:
