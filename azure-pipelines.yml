@@ -1,5 +1,5 @@
 pool:
-  vmImage: 'windows-2022'
+  vmImage: 'windows-latest'
 
 variables:
 - group: 'code-sign-config'
@@ -11,9 +11,10 @@ stages:
 - stage: BuildAndTest  
   jobs:
   - job: 
+    variables:
+      NUGET_PACKAGES: '$(Pipeline.Workspace)/.nuget/packages'
     steps:
     - checkout: self
-      persistCredentials: true
     - task: DownloadSecureFile@1
       displayName: 'Download Client Authentication Certificate'
       name: SM_CLIENT_CERT_FILE
@@ -27,12 +28,14 @@ stages:
     - task: PowerShell@2
       displayName: 'Prepare DigiCert Code Signing'
       condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+      env:
+        SM_CLIENT_CERT_FILE : $(SM_CLIENT_CERT_FILE.secureFilePath)
       inputs:
         targetType: 'inline'
         script: |
           $env:PATH += ';C:\Program Files\DigiCert\DigiCert Keylocker Tools'
           smctl credentials save $(SM_API_KEY) $(SM_CLIENT_CERT_PASSWORD)
-          smksp_cert_sync.exe
+          smctl windows certsync --keypair-alias=$(SM_KEYPAIR_ALIAS)
         failOnStderr: true
         pwsh: true
     - task: PowerShell@2
@@ -54,31 +57,38 @@ stages:
         InformationalVersion: '$(SemVersion)'
         LogLevel: 'verbose'
         FailOnWarning: false
+    - task: Cache@2
+      displayName: 'Cache NuGet packages'
+      inputs:
+        key: 'nuget | "$(Agent.OS)" | **/*.csproj'
+        restoreKeys: 'nuget | "$(Agent.OS)"'
+        path: $(NUGET_PACKAGES)
     - task: DotNetCoreCLI@2
       displayName: 'Restore'
       inputs:
         command: 'restore'
         projects: '*.sln'
         feedsToUse: 'select'
-        vstsFeed: 'b0890edd-bcca-4a1c-b63c-d22daf6e4407/24f47e68-5eca-4ba8-8ab3-905662347d75'
+        vstsFeed: '340e7a34-33ea-4418-8b72-d55dcb74efa7/dd1a6c3c-4e29-44c2-a80d-9d6c7004ac57'
     - task: DotNetCoreCLI@2
       displayName: 'Build'
       inputs:
         command: 'build'
         projects: '*.sln'
-        arguments: '-c $(BuildConfiguration)'
+        arguments: '-c $(BuildConfiguration) --no-restore /p:ContinuousIntegrationBuild=true'
     - task: DotNetCoreCLI@2
       displayName: 'Test'
       inputs:
         command: 'test'
         projects: '*.sln'
-        arguments: '-c $(BuildConfiguration)'
+        arguments: '-c $(BuildConfiguration) --no-build'
         testRunTitle: 'Perform unit tests'
     - task: DotNetCoreCLI@2
       displayName: 'Pack'
       inputs:
         command: 'pack'
         packagesToPack: 'src/Enbrea.BbsPlanung.Db.csproj'
+        arguments: '/p:ContinuousIntegrationBuild=true'
         nobuild: true
         versioningScheme: 'byEnvVar'
         versionEnvVar: 'SemVersion'
@@ -92,7 +102,7 @@ stages:
         arguments: 'sign $(Build.ArtifactStagingDirectory)/**/*.nupkg -Timestamper http://timestamp.digicert.com -CertificateFingerprint $(SM_CERT_FINGERPRINT) -HashAlgorithm SHA256 -Verbosity detailed -Overwrite'
     - publish: '$(Build.ArtifactStagingDirectory)'
       artifact: drop
-      
+
 - stage: Deploy
   jobs:
   - job: 
@@ -117,20 +127,52 @@ stages:
         publishFeedCredentials: 'STUEBER SYSTEMS | nuget.org'
 
 - stage: GitHub
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
   jobs:
   - job: 
-    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
     steps:
     - checkout: self
-      persistCredentials: true
+      fetchDepth: 0
     - task: PowerShell@2
       displayName: 'Push to GitHub'
       inputs:
-        targetType: 'inline'
-        script: |
-          git remote add github https://$(PAT)@github.com/enbrea/enbrea.bbsplanung.db.git
-          git fetch github
-          git checkout .
-          git push github HEAD:main
-          git push --tags github HEAD:main
+        targetType: inline
         pwsh: true
+        script: |
+
+          $ErrorActionPreference = 'Stop'
+
+          try {
+            
+            # Configure Git identity
+            git config user.name  'azure-devops-bot'
+            git config user.email 'azuredevops@stueber.nomail'
+
+            # Add 'github' remote
+            git remote add github "https://$(PAT)@github.com/enbrea/enbrea.bbsplanung.db.git"
+
+            # Fetch remote main if it exists (ok to fail if repo is empty)
+            git fetch --prune github main
+            $fetchCode = $LASTEXITCODE
+
+            # If remote branch exists, only push when remote is an ancestor of HEAD (fast-forward safe)
+            if ($fetchCode -eq 0) {
+              git merge-base --is-ancestor github/main HEAD
+              if ($LASTEXITCODE -ne 0) {
+                Write-Error "Remote has commits not in local (or histories diverged). Aborting push."
+              }
+            }
+
+            # Push only the main branch (fast-forward or create remote if missing)
+            git push --tags github HEAD:refs/heads/main
+            if ($LASTEXITCODE -ne 0) { throw "git push failed with exit code $LASTEXITCODE" }
+            
+          }
+          finally {
+            
+            # Remove the remote so the PAT isn't left in .git/config
+            git remote remove github 2>$null | Out-Null
+            
+          }
+      env:
+        PAT: $(PAT)
