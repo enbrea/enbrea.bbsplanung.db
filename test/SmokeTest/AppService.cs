@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Enbrea.BbsPlanung.Db.SmokeTest
@@ -32,7 +33,7 @@ namespace Enbrea.BbsPlanung.Db.SmokeTest
             _appConfig = appConfig;
         }
 
-        public async Task StartAsync()
+        public async Task StartAsync(CancellationToken cancellationToken)
         {
             Console.WriteLine("BBS-PLANUNG Export Test");
             Console.WriteLine("-----------------------\n");
@@ -60,19 +61,19 @@ namespace Enbrea.BbsPlanung.Db.SmokeTest
             switch (Console.ReadLine())
             {
                 case "1":
-                    await ExportCompanies();
+                    await ExportCompanies(cancellationToken);
                     break;
                 case "5":
-                    await ExportEducationalPrograms();
+                    await ExportEducationalPrograms(cancellationToken);
                     break;
                 case "12":
-                    await ExportSchoolClasses();
+                    await ExportSchoolClasses(cancellationToken);
                     break;
                 case "14":
-                    await ExportStudents();
+                    await ExportStudents(cancellationToken);
                     break;
                 case "15":
-                    await ExportTeachers();
+                    await ExportTeachers(cancellationToken);
                     break;
             }
         }
@@ -82,17 +83,17 @@ namespace Enbrea.BbsPlanung.Db.SmokeTest
             return new BbsPlanungDbReader(_appConfig.DbConnection);
         }
 
-        private async Task ExportCompanies()
+        private async Task ExportCompanies(CancellationToken cancellationToken)
         {
             await using var dbReader = CreateDbReader();
 
-            await dbReader.ConnectAsync();
+            await dbReader.ConnectAsync(cancellationToken);
 
             Console.WriteLine();
             Console.WriteLine("Companies:");
             Console.WriteLine("---------");
 
-            await foreach (var company in dbReader.CompaniesAsync(_appConfig.SchoolNo))
+            await foreach (var company in dbReader.CompaniesAsync(_appConfig.SchoolNo, cancellationToken))
             {
                 Console.WriteLine(@"{0}, {1}, {2}, {3}, {4}", 
                     company.CompanyNo, 
@@ -105,17 +106,17 @@ namespace Enbrea.BbsPlanung.Db.SmokeTest
             await dbReader.DisconnectAsync();
         }
 
-        private async Task ExportEducationalPrograms()
+        private async Task ExportEducationalPrograms(CancellationToken cancellationToken)
         {
             await using var dbReader = CreateDbReader();
 
-            await dbReader.ConnectAsync();
+            await dbReader.ConnectAsync(cancellationToken);
 
             Console.WriteLine();
             Console.WriteLine("Educational Programs:");
             Console.WriteLine("---------------------");
 
-            await foreach (var educationalProgram in dbReader.EducationalProgramsAsync())
+            await foreach (var educationalProgram in dbReader.EducationalProgramsAsync(cancellationToken))
             {
                 Console.WriteLine(@"{0}, {1}, {2}, {3}, {4}, {5}, {6}", 
                     educationalProgram.Code, 
@@ -130,17 +131,17 @@ namespace Enbrea.BbsPlanung.Db.SmokeTest
             await dbReader.DisconnectAsync();
         }
 
-        private async Task ExportSchoolClasses()
+        private async Task ExportSchoolClasses(CancellationToken cancellationToken)
         {
             await using var dbReader = CreateDbReader();
 
-            await dbReader.ConnectAsync();
+            await dbReader.ConnectAsync(cancellationToken);
 
             Console.WriteLine();
             Console.WriteLine("School Classes:");
             Console.WriteLine("---------------");
 
-            await foreach (var schoolClass in dbReader.SchoolClassesAsync(_appConfig.SchoolNo))
+            await foreach (var schoolClass in dbReader.SchoolClassesAsync(_appConfig.SchoolNo, cancellationToken))
             {
                 Console.WriteLine(@"{0}, {1}, {2}, {3}", 
                     schoolClass.Code, 
@@ -152,17 +153,17 @@ namespace Enbrea.BbsPlanung.Db.SmokeTest
             await dbReader.DisconnectAsync();
         }
 
-        private async Task ExportStudents()
+        private async Task ExportStudents(CancellationToken cancellationToken)
         {
             await using var dbReader = CreateDbReader();
 
-            await dbReader.ConnectAsync();
+            await dbReader.ConnectAsync(cancellationToken);
 
             Console.WriteLine();
             Console.WriteLine("Students:");
             Console.WriteLine("---------");
 
-            await foreach (var student in dbReader.StudentsAsync(_appConfig.SchoolNo))
+            await foreach (var student in dbReader.StudentsAsync(_appConfig.SchoolNo, cancellationToken))
             {
                 Console.WriteLine(@"{0}, {1}, {2}, {3}, {4}, {5}", 
                     student.Lastname, 
@@ -176,17 +177,17 @@ namespace Enbrea.BbsPlanung.Db.SmokeTest
             await dbReader.DisconnectAsync();
         }
 
-        private async Task ExportTeachers()
+        private async Task ExportTeachers(CancellationToken cancellationToken)
         {
             await using var dbReader = CreateDbReader();
 
-            await dbReader.ConnectAsync();
+            await dbReader.ConnectAsync(cancellationToken);
 
             Console.WriteLine();
             Console.WriteLine("Teachers:");
             Console.WriteLine("---------");
 
-            await foreach (var teacher in dbReader.TeachersAsync(_appConfig.SchoolNo))
+            await foreach (var teacher in dbReader.TeachersAsync(_appConfig.SchoolNo, cancellationToken))
             {
                 Console.WriteLine(@"{0}, {1}, {2}, {3}, {4}", 
                     teacher.Lastname, 

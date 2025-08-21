@@ -19,6 +19,8 @@
 #endregion
 
 using Microsoft.Extensions.Configuration;
+using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Enbrea.BbsPlanung.Db.SmokeTest
@@ -27,6 +29,14 @@ namespace Enbrea.BbsPlanung.Db.SmokeTest
     {
         static async Task Main()
         {
+            using var cts = new CancellationTokenSource();
+
+            Console.CancelKeyPress += (sender, eventArgs) =>
+            {
+                eventArgs.Cancel = true;
+                cts.Cancel();
+            };
+
             var Configuration = new ConfigurationBuilder()
                .AddJsonFile("appsettings.json", optional: false)
                .AddJsonFile("appsettings.Development.json", optional: true)
@@ -36,7 +46,7 @@ namespace Enbrea.BbsPlanung.Db.SmokeTest
             Configuration.Bind("AppConfig", appConfig);
 
             var appService = new AppService(appConfig);
-            await appService.StartAsync();
+            await appService.StartAsync(cts.Token);
         }
     }
 }
